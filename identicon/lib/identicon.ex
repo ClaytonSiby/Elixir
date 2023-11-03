@@ -6,10 +6,15 @@ defmodule Identicon do
     |> build_grid
   end
 
-  def build_grid(%Identicon.Image{hex: hex}) do
-    hex
-    |> Enum.chunk_every(3, 2, :discard)
-    |> Enum.map(&mirror_row/1) # the & is a reference to the function, in this case mirror_row, the /1 is the arity
+  def build_grid(%Identicon.Image{hex: hex} = image) do
+    grid =
+      hex
+      |> Enum.chunk_every(3, 2, :discard)
+      |> Enum.map(&mirror_row/1) # the & is a reference to the function, in this case mirror_row, the /1 is the arity
+      |> List.flatten
+      |> Enum.with_index
+
+    %Identicon.Image{ image | grid: grid }
   end
 
   def mirror_row(row) do
